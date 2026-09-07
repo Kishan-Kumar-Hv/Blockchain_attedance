@@ -9,15 +9,15 @@ import { getInitials } from '../services/mockData';
 
 export default function TeacherPortal({ 
   teacher, 
-  courses, 
-  students, 
+  courses = [], 
+  students = [], 
   blockchain, 
   activeQRSessions = {}, 
   onLaunchQRSession = () => {}, 
   onCommitBlock 
 }) {
-  const teacherCourses = courses.filter(c => c.instructorId === teacher.id || true);
-  const [selectedCourse, setSelectedCourse] = useState(teacherCourses[0]);
+  const teacherCourses = courses.filter(c => c.instructorId === teacher?.id || true);
+  const [selectedCourse, setSelectedCourse] = useState(teacherCourses[0] || { id: 'CS101', name: 'Course Session', code: 'CS101' });
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const [mining, setMining] = useState(false);
   const [miningProgress, setMiningProgress] = useState({ nonce: 0, hash: '' });
@@ -57,10 +57,10 @@ export default function TeacherPortal({
     setIsQRModalOpen(true);
     const token = `${selectedCourse?.code || 'CS101'}-5MIN-${Math.floor(1000 + Math.random() * 9000)}`;
     onLaunchQRSession({
-      courseId: selectedCourse.id,
-      courseCode: selectedCourse.code,
-      courseName: selectedCourse.name,
-      teacherId: teacher.id,
+      courseId: selectedCourse?.id || 'CS101',
+      courseCode: selectedCourse?.code || 'CS101',
+      courseName: selectedCourse?.name || 'Class Session',
+      teacherId: teacher?.id || 'TCH-001',
       qrToken: token,
       geoCoordinates: { lat: '13.0067° N', lng: '76.1022° E', radius: 50 }
     });
@@ -79,9 +79,9 @@ export default function TeacherPortal({
     }));
 
     const sessionData = {
-      courseId: selectedCourse.id,
-      courseName: selectedCourse.name,
-      teacherId: teacher.id,
+      courseId: selectedCourse?.id || 'CS101',
+      courseName: selectedCourse?.name || 'Class Session',
+      teacherId: teacher?.id || 'TCH-001',
       date: new Date().toISOString().split('T')[0],
       timeSlot: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       method: 'HYBRID_AI_QR',
@@ -111,58 +111,58 @@ export default function TeacherPortal({
   const presentCount = Object.values(attendanceState).filter(s => s.status === 'PRESENT').length;
 
   return (
-    <div className="space-y-8 animate-fadeIn">
+    <div className="space-y-6 sm:space-y-8 animate-fadeIn">
       
       {/* Teacher Header */}
-      <div className="bg-white rounded-2xl p-6 sm:p-8 border border-sky-100 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <div className="flex items-center space-x-5">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 text-white font-extrabold text-2xl flex items-center justify-center border-2 border-sky-300 shadow-md">
-            {getInitials(teacher.name)}
+      <div className="bg-white rounded-2xl p-5 sm:p-8 border border-sky-100 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-5 sm:gap-6">
+        <div className="flex items-center space-x-4 sm:space-x-5">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 text-white font-extrabold text-xl sm:text-2xl flex items-center justify-center border-2 border-sky-300 shadow-md shrink-0">
+            {getInitials(teacher?.name || 'Faculty')}
           </div>
-          <div>
-            <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">{teacher.name}</h2>
-            <p className="text-xs text-slate-600 font-medium">{teacher.designation} • {teacher.department}</p>
-            <div className="flex items-center gap-2 mt-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-sky-100 border border-sky-200 text-sky-800 font-mono text-xs font-bold">
-                Faculty Node Verified
+          <div className="min-w-0">
+            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight truncate">{teacher?.name || 'Faculty Member'}</h2>
+            <p className="text-xs text-slate-600 font-medium truncate">{teacher?.designation || 'Professor'} • {teacher?.department || 'ISE Dept'}</p>
+            <div className="flex items-center gap-2 mt-1.5">
+              <span className="px-2.5 py-0.5 rounded-full bg-sky-100 border border-sky-200 text-sky-800 font-mono text-[10px] sm:text-xs font-bold">
+                Faculty Node Authorized
               </span>
             </div>
           </div>
         </div>
 
         {/* Quick Launch Button */}
-        <div className="flex flex-wrap gap-3">
+        <div className="w-full md:w-auto flex flex-wrap gap-3">
           <button
             onClick={handleOpenQRStream}
-            className="px-5 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold hover:brightness-110 transition-all shadow-md flex items-center gap-2 text-xs"
+            className="w-full sm:w-auto px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold hover:brightness-110 transition-all shadow-md flex items-center justify-center gap-2 text-xs"
           >
-            <QrCode className="w-4 h-4 text-white" /> Launch 5-Min Dynamic QR Stream to Students
+            <QrCode className="w-4 h-4 text-white" /> Launch 5-Min Dynamic QR Stream
           </button>
         </div>
       </div>
 
       {/* Active Session Broadcast Indicator */}
-      {activeQRSessions[selectedCourse.id] && (
-        <div className="p-4 rounded-xl bg-sky-50 border border-sky-200 flex items-center justify-between font-mono text-xs text-sky-900 shadow-sm animate-pulse">
-          <div className="flex items-center gap-2">
-            <Radio className="w-4 h-4 text-sky-600" />
-            <span>Active Live QR Attendance Stream: <strong className="text-slate-900 font-bold">{activeQRSessions[selectedCourse.id].qrToken}</strong></span>
+      {selectedCourse && activeQRSessions[selectedCourse.id] && (
+        <div className="p-3.5 sm:p-4 rounded-xl bg-sky-50 border border-sky-200 flex flex-col sm:flex-row sm:items-center justify-between font-mono text-xs text-sky-900 shadow-sm gap-2 animate-pulse">
+          <div className="flex items-center gap-2 truncate">
+            <Radio className="w-4 h-4 text-sky-600 shrink-0" />
+            <span className="truncate">Active QR Session: <strong className="text-slate-900 font-bold">{activeQRSessions[selectedCourse.id].qrToken}</strong></span>
           </div>
-          <span className="px-2.5 py-0.5 rounded bg-sky-600 text-white text-[11px] font-bold">
-            Dispatched to All Enrolled Students
+          <span className="self-start sm:self-auto px-2 py-0.5 rounded bg-sky-600 text-white text-[10px] font-bold shrink-0">
+            Dispatched to Enrolled Students
           </span>
         </div>
       )}
 
       {/* Course Selection */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {teacherCourses.map(course => {
-          const isSelected = selectedCourse.id === course.id;
+          const isSelected = selectedCourse?.id === course.id;
           return (
             <button
               key={course.id}
               onClick={() => setSelectedCourse(course)}
-              className={`p-5 rounded-xl text-left border transition-all ${
+              className={`p-4 sm:p-5 rounded-xl text-left border transition-all ${
                 isSelected
                   ? 'bg-white border-sky-600 shadow-md ring-2 ring-sky-400/30'
                   : 'bg-white/80 border-sky-100 hover:border-sky-300 text-slate-700 shadow-sm'
@@ -172,35 +172,35 @@ export default function TeacherPortal({
                 {course.code}
               </span>
               <h4 className="text-sm font-extrabold text-slate-900 mt-2 line-clamp-1">{course.name}</h4>
-              <p className="text-xs text-slate-500 mt-1">{course.schedule}</p>
+              <p className="text-xs text-slate-500 mt-1">{course.schedule || 'Scheduled'}</p>
             </button>
           );
         })}
       </div>
 
       {/* Active Session Console */}
-      <div className="bg-white rounded-2xl p-6 sm:p-8 border border-sky-100 shadow-sm space-y-6">
+      <div className="bg-white rounded-2xl p-5 sm:p-8 border border-sky-100 shadow-sm space-y-6">
         
         {/* Console Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-sky-100 pb-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-sky-100 pb-5 sm:pb-6">
           <div>
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
-              <h3 className="text-lg font-bold text-slate-900">Live Classroom Attendance Session</h3>
+              <h3 className="text-base sm:text-lg font-bold text-slate-900">Live Attendance Session</h3>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">Subject: <span className="text-slate-900 font-bold">{selectedCourse.name}</span> ({selectedCourse.room})</p>
+            <p className="text-xs text-slate-500 mt-0.5">Subject: <span className="text-slate-900 font-bold">{selectedCourse?.name}</span> ({selectedCourse?.room || 'Lab 402'})</p>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <span className="text-xs text-slate-500 font-semibold block">Verified Check-ins</span>
-              <span className="text-lg font-black text-slate-900">{presentCount} / {students.length} Present</span>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
+            <div className="text-left sm:text-right">
+              <span className="text-[11px] sm:text-xs text-slate-500 font-semibold block">Live Check-ins</span>
+              <span className="text-base sm:text-lg font-black text-slate-900">{presentCount} / {students.length} Present</span>
             </div>
 
             <button
               onClick={handleMineBlock}
               disabled={mining}
-              className="px-5 py-2.5 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition-all text-xs flex items-center gap-2 shadow-md disabled:opacity-50"
+              className="w-full sm:w-auto px-4 sm:px-5 py-2.5 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition-all text-xs flex items-center justify-center gap-2 shadow-md disabled:opacity-50 shrink-0"
             >
               {mining ? (
                 <>
@@ -208,7 +208,7 @@ export default function TeacherPortal({
                 </>
               ) : (
                 <>
-                  <Database className="w-4 h-4 text-white" /> Mine Session Block to Blockchain
+                  <Database className="w-4 h-4 text-white" /> Mine Session to Blockchain
                 </>
               )}
             </button>
@@ -217,7 +217,7 @@ export default function TeacherPortal({
 
         {/* Mining Block Banner */}
         {mining && (
-          <div className="p-4 rounded-xl bg-sky-50 border border-sky-200 space-y-2 font-mono text-xs text-sky-900">
+          <div className="p-3.5 sm:p-4 rounded-xl bg-sky-50 border border-sky-200 space-y-2 font-mono text-xs text-sky-900">
             <div className="flex justify-between font-bold">
               <span>SHA-256 Proof-of-Work Mining...</span>
               <span>Nonce: #{miningProgress.nonce}</span>
@@ -233,74 +233,82 @@ export default function TeacherPortal({
 
         {/* Roster Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs font-mono">
+          <table className="w-full text-left text-xs font-mono min-w-[620px]">
             <thead className="bg-sky-50 text-sky-900 uppercase tracking-wider border-b border-sky-100 font-bold">
               <tr>
-                <th className="px-6 py-3.5">Student</th>
-                <th className="px-6 py-3.5">Roll Number</th>
-                <th className="px-6 py-3.5">Auth Method</th>
-                <th className="px-6 py-3.5">Biometric Confidence</th>
-                <th className="px-6 py-3.5">Status</th>
-                <th className="px-6 py-3.5 text-right">Action</th>
+                <th className="px-4 sm:px-6 py-3.5">Student</th>
+                <th className="px-4 sm:px-6 py-3.5">Roll Number</th>
+                <th className="px-4 sm:px-6 py-3.5">Auth Method</th>
+                <th className="px-4 sm:px-6 py-3.5">Confidence</th>
+                <th className="px-4 sm:px-6 py-3.5">Status</th>
+                <th className="px-4 sm:px-6 py-3.5 text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-sky-100">
-              {students.slice(0, 20).map(student => {
-                const record = attendanceState[student.id];
-                const isPresent = record?.status === 'PRESENT';
+              {students.length > 0 ? (
+                students.map(student => {
+                  const record = attendanceState[student.id];
+                  const isPresent = record?.status === 'PRESENT';
 
-                return (
-                  <tr key={student.id} className="hover:bg-sky-50/60 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 rounded-lg bg-sky-600 text-white font-extrabold text-xs flex items-center justify-center">
-                          {getInitials(student.name)}
+                  return (
+                    <tr key={student.id} className="hover:bg-sky-50/60 transition-colors">
+                      <td className="px-4 sm:px-6 py-3.5">
+                        <div className="flex items-center space-x-2.5">
+                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-sky-600 text-white font-extrabold text-xs flex items-center justify-center shrink-0">
+                            {getInitials(student.name)}
+                          </div>
+                          <div>
+                            <span className="font-sans font-bold text-slate-900 text-xs block">{student.name}</span>
+                            <span className="text-slate-500 text-[10px]">{student.department}</span>
+                          </div>
                         </div>
-                        <div>
-                          <span className="font-sans font-bold text-slate-900 text-xs block">{student.name}</span>
-                          <span className="text-slate-500 text-[10px]">{student.department}</span>
-                        </div>
-                      </div>
-                    </td>
+                      </td>
 
-                    <td className="px-6 py-4 text-slate-800 font-bold">{student.rollNumber}</td>
+                      <td className="px-4 sm:px-6 py-3.5 text-slate-800 font-bold">{student.rollNumber}</td>
 
-                    <td className="px-6 py-4">
-                      <span className="px-2 py-0.5 rounded bg-sky-50 border border-sky-200 text-sky-800 text-[10px] font-bold">
-                        {record?.method === 'AI_FACE_SCAN' ? '🤖 AI Face ID' : (record?.method?.includes('GEOFENCE') ? '📱 50m Dynamic QR' : '✍️ Manual')}
-                      </span>
-                    </td>
+                      <td className="px-4 sm:px-6 py-3.5">
+                        <span className="px-2 py-0.5 rounded bg-sky-50 border border-sky-200 text-sky-800 text-[10px] font-bold whitespace-nowrap">
+                          {record?.method === 'AI_FACE_SCAN' ? '🤖 AI Face ID' : (record?.method?.includes('GEOFENCE') ? '📱 50m QR' : (record?.method === 'MANUAL_VERIFIED' ? '✍️ Manual' : '⏳ Pending'))}
+                        </span>
+                      </td>
 
-                    <td className="px-6 py-4 text-slate-800 font-bold">
-                      {record?.score} Match
-                    </td>
+                      <td className="px-4 sm:px-6 py-3.5 text-slate-800 font-bold">
+                        {record?.score}
+                      </td>
 
-                    <td className="px-6 py-4">
-                      <span className={`px-2.5 py-1 rounded text-[10px] font-bold inline-flex items-center gap-1 ${
-                        isPresent
-                          ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                          : 'bg-rose-50 text-rose-800 border border-rose-200'
-                      }`}>
-                        {isPresent ? <CheckCircle2 className="w-3 h-3 text-emerald-600" /> : <XCircle className="w-3 h-3 text-rose-600" />}
-                        {record?.status}
-                      </span>
-                    </td>
-
-                    <td className="px-6 py-4 text-right">
-                      <button
-                        onClick={() => toggleStudentStatus(student.id)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all ${
+                      <td className="px-4 sm:px-6 py-3.5">
+                        <span className={`px-2.5 py-1 rounded text-[10px] font-bold inline-flex items-center gap-1 whitespace-nowrap ${
                           isPresent
-                            ? 'bg-rose-50 text-rose-800 border border-rose-200 hover:bg-rose-100'
-                            : 'bg-slate-900 text-white hover:bg-slate-800'
-                        }`}
-                      >
-                        {isPresent ? 'Mark Absent' : 'Mark Present'}
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+                            ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                            : 'bg-rose-50 text-rose-800 border border-rose-200'
+                        }`}>
+                          {isPresent ? <CheckCircle2 className="w-3 h-3 text-emerald-600" /> : <XCircle className="w-3 h-3 text-rose-600" />}
+                          {record?.status}
+                        </span>
+                      </td>
+
+                      <td className="px-4 sm:px-6 py-3.5 text-right">
+                        <button
+                          onClick={() => toggleStudentStatus(student.id)}
+                          className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all whitespace-nowrap ${
+                            isPresent
+                              ? 'bg-rose-50 text-rose-800 border border-rose-200 hover:bg-rose-100'
+                              : 'bg-slate-900 text-white hover:bg-slate-800'
+                          }`}
+                        >
+                          {isPresent ? 'Mark Absent' : 'Mark Present'}
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="6" className="px-6 py-8 text-center text-slate-500">
+                    No students currently registered. Admin can register students from the CRM.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

@@ -175,19 +175,19 @@ export default function App() {
 
       {/* Authenticated User Session Banner */}
       {authSession && (
-        <div className="bg-sky-50 border-b border-sky-200 px-4 py-2 text-xs font-mono text-sky-900 shadow-sm">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <UserCheck className="w-4 h-4 text-sky-700" />
-              <span>Authenticated Session: <strong className="text-slate-900 font-sans font-bold">{authSession.user?.name}</strong></span>
-              <span className="px-2 py-0.5 rounded bg-sky-200 border border-sky-300 text-[10px] text-sky-900 font-bold">
-                STRICT {authSession.role} PORTAL AUTHORIZATION
+        <div className="bg-sky-50 border-b border-sky-200 px-3 sm:px-4 py-2 text-xs font-mono text-sky-900 shadow-sm">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <UserCheck className="w-4 h-4 text-sky-700 shrink-0" />
+              <span className="truncate">Session: <strong className="text-slate-900 font-sans font-bold">{authSession.user?.name}</strong></span>
+              <span className="px-2 py-0.5 rounded bg-sky-200 border border-sky-300 text-[10px] text-sky-900 font-bold shrink-0">
+                {authSession.role}
               </span>
             </div>
 
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-sky-300 text-sky-900 font-bold hover:bg-sky-100 transition-colors text-[11px] shadow-sm"
+              className="self-start sm:self-auto flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-sky-300 text-sky-900 font-bold hover:bg-sky-100 transition-colors text-[11px] shadow-sm shrink-0"
             >
               <LogOut className="w-3.5 h-3.5 text-sky-700" /> Sign Out
             </button>

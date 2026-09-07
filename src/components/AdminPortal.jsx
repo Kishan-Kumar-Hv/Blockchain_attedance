@@ -328,60 +328,60 @@ export default function AdminPortal({
         </div>
 
         {/* Navigation Tabs */}
-        <div className="mt-8 pt-6 border-t border-sky-100 flex flex-wrap gap-3">
+        <div className="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-sky-100 flex gap-2 sm:gap-3 overflow-x-auto whitespace-nowrap pb-1 scrollbar-none">
           <button
             onClick={() => setActiveAdminTab('CRM')}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+            className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 sm:gap-2 shrink-0 ${
               activeAdminTab === 'CRM'
                 ? 'bg-sky-600 text-white shadow-md'
                 : 'bg-sky-50 border border-sky-100 text-sky-900 hover:bg-sky-100'
             }`}
           >
-            <Users className="w-4 h-4" /> Academic CRM (Directory & Passwords)
+            <Users className="w-4 h-4" /> Academic CRM
           </button>
 
           <button
             onClick={() => setActiveAdminTab('ENCODER')}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+            className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 sm:gap-2 shrink-0 ${
               activeAdminTab === 'ENCODER'
                 ? 'bg-sky-600 text-white shadow-md'
                 : 'bg-sky-50 border border-sky-100 text-sky-900 hover:bg-sky-100'
             }`}
           >
-            <Binary className="w-4 h-4" /> Hash Encoder & Decoder
+            <Binary className="w-4 h-4" /> Token Encoder/Decoder
           </button>
 
           <button
             onClick={() => setActiveAdminTab('EXPLORER')}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+            className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 sm:gap-2 shrink-0 ${
               activeAdminTab === 'EXPLORER'
                 ? 'bg-sky-600 text-white shadow-md'
                 : 'bg-sky-50 border border-sky-100 text-sky-900 hover:bg-sky-100'
             }`}
           >
-            <Layers className="w-4 h-4" /> Block Explorer Stream
+            <Layers className="w-4 h-4" /> Blockchain Explorer
           </button>
 
           <button
             onClick={() => setActiveAdminTab('LEDGER')}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+            className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 sm:gap-2 shrink-0 ${
               activeAdminTab === 'LEDGER'
                 ? 'bg-sky-600 text-white shadow-md'
                 : 'bg-sky-50 border border-sky-100 text-sky-900 hover:bg-sky-100'
             }`}
           >
-            <ShieldAlert className="w-4 h-4" /> Tamper Auditor & Security
+            <ShieldAlert className="w-4 h-4" /> Tamper Auditor
           </button>
 
           <button
             onClick={() => setActiveAdminTab('POLICIES')}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+            className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 sm:gap-2 shrink-0 ${
               activeAdminTab === 'POLICIES'
                 ? 'bg-sky-600 text-white shadow-md'
                 : 'bg-sky-50 border border-sky-100 text-sky-900 hover:bg-sky-100'
             }`}
           >
-            <Sliders className="w-4 h-4" /> Smart Contract Policies
+            <Sliders className="w-4 h-4" /> System Policies
           </button>
         </div>
       </div>
